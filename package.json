@@ -1,0 +1,24 @@
+{
+  "name": "savable",
+  "version": "0.1.0",
+  "description": "a tiny tool used for checking an object is changed",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./example/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BanKnight/savable.git"
+  },
+  "keywords": [
+    "nodejs",
+    "proxy",
+    "savable"
+  ],
+  "author": "bansky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BanKnight/savable/issues"
+  },
+  "homepage": "https://github.com/BanKnight/savable#readme"
+}
