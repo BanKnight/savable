@@ -1,25 +1,28 @@
 const savable = require("../index")
 
-let wrap = savable({ test: 1 })
+let wrap = savable({ test: 1 }, function ()
+{
+    console.log("obj changed")
+})
 
 wrap.test = 2
 wrap.obj = {}
 
-console.dir(wrap)
-console.log(wrap.__should_save)
+console.dir(wrap)       //{ test: 2, obj: {} }
+console.log(wrap.__changed)     //true
 
-wrap.__should_save = false
+wrap.__changed = false
 
-console.log(wrap.__should_save)
+console.log(wrap.__changed) //false
 
 wrap.obj.ceshi = "what"
-console.log(wrap.__should_save)
+console.log(wrap.__changed) //true
 
-wrap.__should_save = false
+wrap.__changed = false
 
-console.log(wrap.__should_save)
+console.log(wrap.__changed) //false
 
 delete wrap.obj
 
-console.dir(wrap)
-console.log(wrap.__should_save)
+console.dir(wrap)           //{ test: 2 }
+console.log(wrap.__changed) //true

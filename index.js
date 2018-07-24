@@ -1,31 +1,30 @@
 
 const savable = function (data, ctx)
 {
-    ctx = ctx || {
-        should_save: false,
-        caches: new WeakMap(),
-    }
-
     return new Proxy(data, {
         set: function (target, key, val)
         {
-            if (key == "__should_save")
+            if (key == "__changed")
             {
-                ctx.should_save = val
+                ctx.changed = val
                 return true
             }
-
-            ctx.should_save = true
             target[key] = val
+            ctx.notice()
 
             return true
         },
         get: function (target, key)
         {
-            if (key == "__should_save")
+            if (key == "__changed")
             {
-                return ctx.should_save
+                return ctx.changed
             }
+            else if (key == "__data")
+            {
+                return target
+            }
+
             let exist = target[key]
             if (exist instanceof Object)
             {
@@ -44,16 +43,49 @@ const savable = function (data, ctx)
         deleteProperty: function (target, key)
         {
             let exist = target[key]
-            if (exist)
+            if (exist == null)
             {
-                ctx.caches.delete(exist)
-
-                ctx.should_save = true
+                return false
             }
+
+            ctx.caches.delete(exist)
             delete target[key]
+
+            ctx.notice()
+
             return true
         }
     })
 }
 
-module.exports = savable
+module.exports = function (data, cb)
+{
+    let ctx = {
+        changed: false,
+        caches: new WeakMap(),
+        noticing: false
+    }
+
+    ctx.notice = function ()
+    {
+        ctx.changed = true
+
+        if (cb == null)
+        {
+            return
+        }
+        if (ctx.noticing == true)
+        {
+            return
+        }
+
+        ctx.noticing = true
+        setImmediate(() =>
+        {
+            ctx.noticing = false
+            cb()
+        })
+    }
+
+    return savable(data, ctx)
+}
