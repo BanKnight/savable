@@ -7,6 +7,8 @@ const savable = function (data, ctx)
             if (key == "__changed")
             {
                 ctx.changed = val
+                ctx.notice()
+
                 return true
             }
             target[key] = val
@@ -26,7 +28,7 @@ const savable = function (data, ctx)
             }
 
             let exist = target[key]
-            if (exist instanceof Object)
+            if (typeof (exist) == "object")
             {
                 let wrap = ctx.caches.get(exist)
                 if (wrap == null)

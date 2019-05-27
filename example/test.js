@@ -1,6 +1,6 @@
 const savable = require("../index")
 
-let wrap = savable({ test: 1 }, function ()
+let wrap = savable({ test: 1, players: new Map() }, function ()
 {
     console.log("obj changed")
 })
@@ -26,3 +26,10 @@ delete wrap.obj
 
 console.dir(wrap)           //{ test: 2 }
 console.log(wrap.__changed) //true
+
+const players = wrap.players.__data
+
+players.set(123, { name: "test" })
+
+console.dir(wrap)
+
