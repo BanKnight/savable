@@ -7,11 +7,16 @@ const savable = function (data, ctx)
             if (key == "__changed")
             {
                 ctx.changed = val
-                ctx.notice()
+                if (val == true)
+                {
+                    ctx.notice()
+                }
 
                 return true
             }
             target[key] = val
+
+            ctx.changed = true
             ctx.notice()
 
             return true
@@ -53,6 +58,7 @@ const savable = function (data, ctx)
             ctx.caches.delete(exist)
             delete target[key]
 
+            ctx.changed = true
             ctx.notice()
 
             return true
@@ -70,8 +76,6 @@ module.exports = function (data, cb)
 
     ctx.notice = function ()
     {
-        ctx.changed = true
-
         if (cb == null)
         {
             return
