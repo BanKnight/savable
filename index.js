@@ -1,14 +1,10 @@
 
-const savable = function (data, ctx)
-{
+const savable = function (data, ctx) {
     return new Proxy(data, {
-        set: function (target, key, val)
-        {
-            if (key == "__changed")
-            {
+        set: function (target, key, val) {
+            if (key == "__changed") {
                 ctx.changed = val
-                if (val == true)
-                {
+                if (val == true) {
                     ctx.notice()
                 }
 
@@ -21,23 +17,18 @@ const savable = function (data, ctx)
 
             return true
         },
-        get: function (target, key)
-        {
-            if (key == "__changed")
-            {
+        get: function (target, key) {
+            if (key == "__changed") {
                 return ctx.changed
             }
-            else if (key == "__data")
-            {
+            else if (key == "__data") {
                 return target
             }
 
             let exist = target[key]
-            if (typeof (exist) == "object")
-            {
+            if (exist instanceof Object) {
                 let wrap = ctx.caches.get(exist)
-                if (wrap == null)
-                {
+                if (wrap == null) {
                     wrap = savable(exist, ctx)
                     ctx.caches.set(exist, wrap)
                 }
@@ -47,11 +38,9 @@ const savable = function (data, ctx)
 
             return exist
         },
-        deleteProperty: function (target, key)
-        {
+        deleteProperty: function (target, key) {
             let exist = target[key]
-            if (exist == null)
-            {
+            if (exist == null) {
                 return false
             }
 
@@ -66,28 +55,23 @@ const savable = function (data, ctx)
     })
 }
 
-module.exports = function (data, cb)
-{
+module.exports = function (data, cb) {
     let ctx = {
         changed: false,
         caches: new WeakMap(),
         noticing: false
     }
 
-    ctx.notice = function ()
-    {
-        if (cb == null)
-        {
+    ctx.notice = function () {
+        if (cb == null) {
             return
         }
-        if (ctx.noticing == true)
-        {
+        if (ctx.noticing == true) {
             return
         }
 
         ctx.noticing = true
-        setImmediate(() =>
-        {
+        setImmediate(() => {
             ctx.noticing = false
             cb()
         })
